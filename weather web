@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather web</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      margin-top: 50px;
+    }
+
+    h1 {
+      font-size: 24px;
+    }
+
+    input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      background-color: #007BFF;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .weather-info {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Weather web</h1>
+    <input type="text" id="locationInput" placeholder="Enter a city" />
+    <button id="searchButton">Search</button>
+    <div class="weather-info">
+      <h2 id="location"></h2>
+      <p id="temperature"></p>
+      <p id="condition"></p>
+    </div>
+  </div>
+  <script>
+    const apiKey = '9abf51ce39af4f01830154448250303';
+    const apiUrl = 'http://api.weatherapi.com/v1/current.json';
+
+    const locationInput = document.getElementById('locationInput');
+    const searchButton = document.getElementById('searchButton');
+    const locationElement = document.getElementById('location');
+    const temperatureElement = document.getElementById('temperature');
+    const conditionElement = document.getElementById('condition');
+
+    searchButton.addEventListener('click', () => {
+      const location = locationInput.value.trim();
+      if (location === '') {
+        alert('Please enter a location.');
+        return;
+      }
+      fetchWeatherData(location);
+    });
+
+    function fetchWeatherData(location) {
+      const url = `${apiUrl}?key=${apiKey}&q=${location}&aqi=yes`;
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Location not found');
+          }
+          return response.json();
+        })
+        .then(data => {
+          locationElement.textContent = `${data.location.name}, ${data.location.country}`;
+          temperatureElement.textContent = `Temperature: ${data.current.temp_c}°C`;
+          conditionElement.textContent = `Condition: ${data.current.condition.text}`;
+        })
+        .catch(error => {
+          alert(error.message);
+        });
+    }
+  </script>
+</body>
+</html>
+
